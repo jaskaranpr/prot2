@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import LoadingScreen from './components/LoadingScreen';
+import StickFigureCharacter from './components/StickFigureCharacter';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +26,7 @@ const App: React.FC = () => {
 
           <div className="space-y-6 text-lg md:text-xl text-neutral-700 leading-relaxed max-w-2xl mx-auto pt-6">
             <p>
-              Frontend Engineer with 3+ years of experience building high-performance applications across web and mobile platforms using React, React Native, Flutter, and Kotlin.
+              Frontend Engineer with 4+ years of experience building high-performance applications across web and mobile platforms using React, React Native, Flutter, and Kotlin.
             </p>
             <p>
               Specializing in custom UI components, charting systems, and cross-platform solutions that deliver measurable results.
@@ -137,6 +138,9 @@ const App: React.FC = () => {
           </p>
         </div>
       </section>
+
+      {/* Animated Stick Figure Character */}
+      <StickFigureCharacter />
 
     </div>
   );
