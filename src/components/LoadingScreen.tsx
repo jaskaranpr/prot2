@@ -17,8 +17,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       // Animate from rightmost bar (index 7) to leftmost (index 0)
       const timeline = createTimeline({
         defaults: {
-          duration: 1000,
-          ease: 'inOutQuart',
+          duration: 1200,
+          ease: 'outExpo', // Apple-style smooth deceleration
         },
         onComplete: () => {
           onComplete();
@@ -32,67 +32,63 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       // Animate each bar from right to left with staggered delay
       reversedBars.forEach((bar, index) => {
         const trail = reversedTrails[index];
+        const staggerDelay = index * 100; // 100ms stagger between bars
         
-        // Animate the main bar
+        // Animate the main bar sliding up
         timeline.add(bar, {
           translateY: '-100%',
-          duration: 1000,
-        }, index * 120); // 120ms delay between each bar (slower stagger)
-
-        // Animate the gradient trail - starts slightly after the bar
-        timeline.add(trail, {
-          opacity: [0, 1],
-          translateY: [0, '-100%'],
           duration: 1200,
-          ease: 'inOutCubic',
-        }, index * 120 + 50); // Trail starts 50ms after its bar
+          ease: 'outExpo',
+        }, staggerDelay);
 
-        // Fade out the trail
+        // Animate the gradient trail - starts AFTER the bar with a delay, creating trailing effect
         timeline.add(trail, {
-          opacity: 0,
-          duration: 400,
-          ease: 'outQuad',
-        }, index * 120 + 800);
+          opacity: [0, 1, 1, 0],
+          translateY: ['30%', '-100%'],
+          duration: 1600,
+          ease: 'outExpo',
+        }, staggerDelay + 150); // Trail starts 150ms after its bar
       });
 
-      // Fade out the entire container after bars have moved
+      // Fade out the entire container smoothly
       timeline.add(containerRef.current!, {
         opacity: 0,
-        duration: 400,
+        duration: 500,
         ease: 'outQuad',
-      }, '-=300');
-    }, 400);
+      }, '-=400');
+    }, 500);
 
     return () => clearTimeout(startDelay);
   }, [onComplete]);
 
-  // Create 8 bars with gradient trails
+  // Create 8 bars with gradient trails - trails rendered AFTER bars for proper z-index
   const bars = Array.from({ length: 8 }, (_, index) => (
-    <React.Fragment key={index}>
-      {/* Gradient trail */}
-      <div
-        ref={(el) => {
-          if (el) trailsRef.current[index] = el;
-        }}
-        className="loading-trail"
-        style={{
-          left: `${index * 12.5}%`,
-          width: '12.5%',
-          opacity: 0,
-        }}
-      />
-      {/* Main bar */}
-      <div
-        ref={(el) => {
-          if (el) barsRef.current[index] = el;
-        }}
-        className="loading-bar"
-        style={{
-          left: `${index * 12.5}%`,
-          width: '12.5%',
-        }}
-      />
-    </React.Fragment>
+    <div
+      key={`bar-${index}`}
+      ref={(el) => {
+        if (el) barsRef.current[index] = el;
+      }}
+      className="loading-bar"
+      style={{
+        left: `${index * 12.5}%`,
+        width: '12.5%',
+      }}
+    />
+  ));
+
+  const trails = Array.from({ length: 8 }, (_, index) => (
+    <div
+      key={`trail-${index}`}
+      ref={(el) => {
+        if (el) trailsRef.current[index] = el;
+      }}
+      className={`loading-trail loading-trail-${index}`}
+      style={{
+        left: `${index * 12.5}%`,
+        width: '12.5%',
+        opacity: 0,
+      }}
+    />
   ));
 
   return (
@@ -100,7 +96,9 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       ref={containerRef}
       className="loading-screen"
     >
+      {/* Bars first (behind), then trails (on top) */}
       {bars}
+      {trails}
     </div>
   );
 };

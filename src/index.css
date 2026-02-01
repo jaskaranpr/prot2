@@ -40,21 +40,53 @@ body {
   will-change: transform;
 }
 
+/* Base trail styles */
 .loading-trail {
   position: absolute;
   top: 0;
   height: 100%;
-  background: linear-gradient(
-    to top,
-    transparent 0%,
-    rgba(0, 0, 0, 0.02) 10%,
-    rgba(0, 0, 0, 0.05) 20%,
-    rgba(0, 0, 0, 0.1) 35%,
-    rgba(0, 0, 0, 0.2) 50%,
-    rgba(0, 0, 0, 0.35) 65%,
-    rgba(0, 0, 0, 0.5) 80%,
-    rgba(0, 0, 0, 0.7) 90%,
-    rgba(0, 0, 0, 0.85) 100%
-  );
   will-change: transform, opacity;
+  filter: blur(12px);
+  z-index: 1;
+}
+
+/* Apple-style solid colors for each bar (right to left) */
+/* Bar 7 (rightmost) - Pink */
+.loading-trail-7 {
+  background-color: rgba(255, 45, 85, 0.9);
+}
+
+/* Bar 6 - Magenta */
+.loading-trail-6 {
+  background-color: rgba(255, 45, 149, 0.9);
+}
+
+/* Bar 5 - Purple */
+.loading-trail-5 {
+  background-color: rgba(191, 90, 242, 0.9);
+}
+
+/* Bar 4 - Indigo */
+.loading-trail-4 {
+  background-color: rgba(88, 86, 214, 0.9);
+}
+
+/* Bar 3 - Blue */
+.loading-trail-3 {
+  background-color: rgba(0, 122, 255, 0.9);
+}
+
+/* Bar 2 - Cyan */
+.loading-trail-2 {
+  background-color: rgba(90, 200, 250, 0.9);
+}
+
+/* Bar 1 - Green */
+.loading-trail-1 {
+  background-color: rgba(48, 209, 88, 0.9);
+}
+
+/* Bar 0 (leftmost) - Yellow */
+.loading-trail-0 {
+  background-color: rgba(255, 204, 0, 0.9);
 }
