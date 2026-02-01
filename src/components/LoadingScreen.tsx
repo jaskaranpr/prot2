@@ -25,14 +25,12 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         }
       });
 
-      // Get bars and trails in reverse order (rightmost first)
+      // Get bars in reverse order (rightmost first)
       const reversedBars = [...barsRef.current].reverse();
-      const reversedTrails = [...trailsRef.current].reverse();
 
       // Animate each bar from right to left with staggered delay
-      reversedBars.forEach((bar, index) => {
-        const trail = reversedTrails[index];
-        const staggerDelay = index * 100; // 100ms stagger between bars
+      reversedBars.forEach((bar, barIdx) => {
+        const staggerDelay = barIdx * 100; // 100ms stagger between bars
         
         // Animate the main bar sliding up
         timeline.add(bar, {
@@ -41,13 +39,18 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
           ease: 'outExpo',
         }, staggerDelay);
 
-        // Animate the gradient trail - starts AFTER the bar with a delay, creating trailing effect
+        // Animate single trail per bar with stretching effect and motion blur
+        const originalBarIndex = 7 - barIdx;
+        const trail = trailsRef.current[originalBarIndex];
+        const trailDelay = staggerDelay + 20; // Start 20ms after bar
+        
         timeline.add(trail, {
-          opacity: [0, 1, 1, 0],
-          translateY: ['30%', '-100%'],
-          duration: 1600,
+          // opacity: [1,1],
+          translateY: [0, '-140%'],
+          scaleY: [0, 1.5, 1, 0.5],
+          duration: 1200, // Longer than bar's 1200ms for trailing effect
           ease: 'outExpo',
-        }, staggerDelay + 150); // Trail starts 150ms after its bar
+        }, trailDelay);
       });
 
       // Fade out the entire container smoothly
@@ -76,20 +79,20 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     />
   ));
 
-  const trails = Array.from({ length: 8 }, (_, index) => (
-    <div
-      key={`trail-${index}`}
-      ref={(el) => {
-        if (el) trailsRef.current[index] = el;
-      }}
-      className={`loading-trail loading-trail-${index}`}
-      style={{
-        left: `${index * 12.5}%`,
-        width: '12.5%',
-        opacity: 0,
-      }}
-    />
-  ));
+  const trails = Array.from({ length: 8 }, (_, barIndex) => {
+    return (
+      <div
+        key={`trail-${barIndex}`}
+        ref={(el) => { if (el) trailsRef.current[barIndex] = el; }}
+        className={`loading-trail loading-trail-bar-${barIndex}`}
+        style={{
+          left: `${barIndex * 12.5}%`,
+          width: '12.5%',
+          opacity: 1,
+        }}
+      />
+    );
+  });
 
   return (
     <div 
@@ -97,8 +100,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       className="loading-screen"
     >
       {/* Bars first (behind), then trails (on top) */}
-      {bars}
       {trails}
+      {bars}
     </div>
   );
 };
